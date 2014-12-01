@@ -1,6 +1,4 @@
-from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
+from django.shortcuts import redirect, render_to_response
 from user_agents import parse
 from redirect.models import Page
 
@@ -9,10 +7,12 @@ def redirector(request, id):
     url = Page.objects.get(pk=id)
     user_agent = parse(userAgent)
     if url.all:
-        return redirect(url.all)
+        redirection_url = url.all
     elif user_agent.os.family == 'Android':
-        return redirect(url.android)
+        redirection_url = url.android
     elif user_agent.os.family == 'iOS':
-        return redirect(url.ios)
+        redirection_url = url.ios
     else:
-        return redirect(url.other)
+        redirection_url = url.other
+
+    return render_to_response('redirection.html', {'redirection_url': redirection_url})

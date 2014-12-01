@@ -59,10 +59,11 @@ WSGI_APPLICATION = 'redirection.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'redirect',
-        'USER': 'josko',
+        'NAME': 'redirection',
+        'USER': 'root',
         'PASSWORD': '1aragon1',
         'HOST': '127.0.0.1',
+        'PORT': '3307',
     }
 }
 
