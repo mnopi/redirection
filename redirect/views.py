@@ -2,9 +2,9 @@ from django.shortcuts import redirect, render_to_response
 from user_agents import parse
 from redirect.models import Page
 
-def redirector(request, id):
+def redirector(request, uri):
     userAgent = request.META['HTTP_USER_AGENT']
-    url = Page.objects.get(pk=id)
+    url = Page.objects.get(uri=uri)
     user_agent = parse(userAgent)
     if url.all:
         redirection_url = url.all
