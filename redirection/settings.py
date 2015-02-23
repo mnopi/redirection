@@ -63,7 +63,8 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '1aragon1',
         'HOST': '127.0.0.1',
-        'PORT': '3307',
+        # 'HOST': '88.26.212.82',
+        'PORT': '3306',
     }
 }
 
@@ -93,15 +94,19 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'debug.log'),
+            'maxBytes': 1024*1024*5, # 5 MB
+            'backupCount': 5,
         },
     },
     'loggers': {
-        'django.request': {
+        'django': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True,
         },
     },
 }
+
+APPEND_SLASH = True

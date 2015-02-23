@@ -16,3 +16,8 @@ def redirector(request, uri):
         redirection_url = url.other
 
     return render_to_response('redirection.html', {'redirection_url': redirection_url})
+
+
+def test(request):
+    return render_to_response('test.html')
+
