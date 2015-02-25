@@ -2,7 +2,13 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <meta http-equiv="Refresh" content="0;url={{ redirection_url }}">
+{#    <meta http-equiv="Refresh" content="0;url={{ redirection_url }}">#}
+
+    <meta name="twitter:card" content="photo" />
+    <meta name="twitter:title" content="{{ page.card_title }}" />
+    <meta name="twitter:image" content="{{ page.card_img_full_url }}" />
+    <meta name="twitter:url" content="{{ page.full_url }}" />
+
     <title></title>
     <script>
         (function (i, s, o, g, r, a, m) {
@@ -25,6 +31,5 @@
     </script>
 </head>
 <body>
-    meeeeee
 </body>
 </html>

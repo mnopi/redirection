@@ -7,6 +7,8 @@ class Page(models.Model):
     android = models.URLField(max_length=200, null=True, blank=True)
     ios = models.URLField(max_length=200, null=True, blank=True)
     other = models.URLField(max_length=200, null=True, blank=True)
+    card_img = models.ImageField(upload_to='pages_imgs', blank=True, null=True)
+    card_title = models.CharField(max_length=140, blank=True, null=True)
 
     def __unicode__(self):
         return str(self.pk)

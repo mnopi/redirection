@@ -48,6 +48,14 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+
+    # Put your context processors here
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+    "django.core.context_processors.media",
+)
+
 ROOT_URLCONF = 'redirection.urls'
 
 WSGI_APPLICATION = 'redirection.wsgi.application'
@@ -87,6 +95,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 LOGGING = {
     'version': 1,
