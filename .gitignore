@@ -3,3 +3,4 @@ static/
 nohup.out
 *.pyc
 *.log
+logs/
