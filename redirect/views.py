@@ -20,6 +20,9 @@ def redirector(request, uri):
         page.card_img_full_url = request.build_absolute_uri(page.card_img_file.url)
     elif page.card_img_url:
         page.card_img_full_url = page.card_img_url
+    else:
+        page.card_img_full_url = None
+
     page.full_url = request.build_absolute_uri()
 
     return render_to_response(
