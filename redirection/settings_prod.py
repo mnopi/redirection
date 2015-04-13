@@ -19,6 +19,7 @@ ALLOWED_HOSTS = [
     'firstbuy.it',
     'subelamierda.es',
     'subelabasura.es',
+    'euride.org',
     'mikios.co',
     'igoo.co',
     '104.131.71.11',
