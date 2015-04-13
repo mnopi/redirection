@@ -12,5 +12,18 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = ['mikios.co', 'igoo.co', '104.131.71.11', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'labelee.com',
+    'nupiphone.com',
+    'fonopi.com',
+    'firstbuy.it',
+    'subelamierda.es',
+    'subelabasura.es',
+    'mikios.co',
+    'igoo.co',
+    '104.131.71.11',
+    'localhost',
+    '127.0.0.1'
+]
+
 DEBUG = TEMPLATE_DEBUG = False
