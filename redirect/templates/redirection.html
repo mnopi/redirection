@@ -2,42 +2,45 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <meta http-equiv="Refresh" content="0;url={{ redirection_url }}">
 
-    {% if page.card_type %}
-        <meta name="twitter:card" content="{{ page.get_card_type_display }}" />
-        <meta name="twitter:title" content="{{ page.card_title }}" />
-
-        {% if page.card_type == 2 or page.card_type == 3 %}
-            <meta name="twitter:description" content="{{ page.card_description}}" />
-        {% endif %}
-
-        <meta name="twitter:image" content="{{ page.card_img_full_url }}" />
-        <meta name="twitter:url" content="{{ page.full_url }}" />
-    {% endif %}
+{#    {% if page.card_type %}#}
+{#        <meta name="twitter:card" content="{{ page.get_card_type_display }}" />#}
+{#        <meta name="twitter:title" content="{{ page.card_title }}" />#}
+{##}
+{#        {% if page.card_type == 2 or page.card_type == 3 %}#}
+{#            <meta name="twitter:description" content="{{ page.card_description}}" />#}
+{#        {% endif %}#}
+{##}
+{#        <meta name="twitter:image" content="{{ page.card_img_full_url }}" />#}
+{#        <meta name="twitter:url" content="{{ page.full_url }}" />#}
+{#    {% endif %}#}
 
     <title></title>
     <script>
-        (function (i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r;
-            i[r] = i[r] || function () {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date();
-            a = s.createElement(o),
-                    m = s.getElementsByTagName(o)[0];
-            a.async = 1;
-            a.src = g;
-            m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
+        var redirect_uri = "{{ redirection_url|safe }}";
+        function redirection(){
+            window.location = redirect_uri;
+        }
+{#        (function (i, s, o, g, r, a, m) {#}
+{#            i['GoogleAnalyticsObject'] = r;#}
+{#            i[r] = i[r] || function () {#}
+{#                (i[r].q = i[r].q || []).push(arguments)#}
+{#            }, i[r].l = 1 * new Date();#}
+{#            a = s.createElement(o),#}
+{#                    m = s.getElementsByTagName(o)[0];#}
+{#            a.async = 1;#}
+{#            a.src = g;#}
+{#            m.parentNode.insertBefore(a, m)#}
+{#        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');#}
+{##}
 {#        ga('create', 'UA-55971018-1', 'auto');#}
-        ga('create', 'UA-57395840-5', 'auto');
-        ga('require', 'linkid', 'linkid.js');
-        ga('send', 'pageview');
-
-        console.log('analytics saved ok');
+{#        ga('create', 'UA-57395840-5', 'auto');#}
+{#        ga('require', 'linkid', 'linkid.js');#}
+{#        ga('send', 'pageview');#}
+{##}
+{#        console.log('analytics saved ok');#}
     </script>
 </head>
-<body>
+<body onload="redirection()">
 </body>
 </html>

@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'redirect',
+    'south',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -67,15 +68,24 @@ WSGI_APPLICATION = 'redirection.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'redirection',
+        'NAME': 'sync_pagelinks',
+        "USER": "root",
+        "PASSWORD": "",
+        "HOST": "127.0.0.1",
+    },
+    'twitter_bots_prod':{
+        'NAME': 'twitter_bots_db_optimization',
+        'ENGINE': 'django.db.backends.mysql',
         'USER': 'root',
         'PASSWORD': '1aragon1',
-        'HOST': '127.0.0.1',
-        # 'HOST': '88.26.212.82',
+        'HOST': '192.168.1.115',
         'PORT': '3306',
     }
+
 }
 
+
+DATABASE_ROUTERS = ('redirect.twitter_bots_router.TwitterBotsRouter',)
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
