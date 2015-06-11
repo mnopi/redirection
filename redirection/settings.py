@@ -74,11 +74,11 @@ DATABASES = {
         "HOST": "127.0.0.1",
     },
     'twitter_bots_prod':{
-        'NAME': 'twitter_bots_db_optimization',
+        'NAME': 'twitter_bots_prod',
         'ENGINE': 'django.db.backends.mysql',
         'USER': 'root',
         'PASSWORD': '1aragon1',
-        'HOST': '192.168.1.115',
+        'HOST': '46.101.61.145',
         'PORT': '3306',
     }
 
