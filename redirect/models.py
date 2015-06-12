@@ -437,6 +437,11 @@ class ProjectMutweetclick(models.Model):
     id = models.IntegerField(primary_key=True)
     clicked_mutweet = models.ForeignKey(ProjectClickedmutweet, related_name='clicks')
     date_clicked = models.DateTimeField()
+    ANDROID = 0
+    IOS = 1
+    OTHERS = 2
+    platform = models.IntegerField()
+    raw_useragent = models.CharField(max_length=500)
     class Meta:
         managed = False
         db_table = 'project_mutweetclick'
@@ -526,7 +531,6 @@ class ProjectProxiesgroup(models.Model):
     break_duration_hours = models.CharField(max_length=10)
     rotate_api_keys = models.IntegerField()
     max_hours_using_same_api_key = models.CharField(max_length=10, blank=True)
-    max_api_keys_per_bot = models.IntegerField(blank=True, null=True)
     minutes_between_follows = models.CharField(max_length=10)
     minutes_between_followbacks = models.CharField(max_length=10)
     minutes_between_unfollows = models.CharField(max_length=10)
@@ -550,6 +554,7 @@ class ProjectProxiesgroup(models.Model):
     interleave_mistakes_on_mutweet_msg = models.IntegerField()
     interleave_symbols_every_words_num = models.CharField(max_length=10)
     interleave_mistakes_count = models.CharField(max_length=10)
+    max_bots_per_api_key = models.CharField(max_length=10)
     class Meta:
         managed = False
         db_table = 'project_proxiesgroup'
@@ -615,6 +620,8 @@ class ProjectTwitterapikey(models.Model):
     consumer_key = models.CharField(unique=True, max_length=100, blank=True)
     consumer_secret = models.CharField(unique=True, max_length=100, blank=True)
     bot = models.ForeignKey(CoreTwitterbot)
+    date_created = models.DateTimeField()
+    max_bots_using = models.IntegerField()
     class Meta:
         managed = False
         db_table = 'project_twitterapikey'

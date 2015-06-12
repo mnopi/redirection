@@ -18,52 +18,61 @@ def redirector(request, uri=None):
         a = uri.split('/')
         tweet_id = int(a[len(a)-1])
 
-        mutweetclicks = ProjectMutweetclick.objects.all()
-        a = mutweetclicks
-        muTweet = ProjectMutweet.objects.get(pk=tweet_id)
-        promo = ProjectPromo.objects.get(pk=muTweet.promo_msg._get_pk_val)
-        mentioned_twitteruser = ProjectTwitteruser.objects.get(pk=muTweet.mentioned_twitteruser_id)
-        bot_sender = CoreTwitterbot.objects.get(pk=muTweet.bot_sender_id)
-        link_all = promo.link_all
-        link_android = promo.link_android
-        link_ios = promo.link_ios
-        link_others = promo.link_others
-
-        # se registra el click en el enlace del tweet en la base de datos
-        try:
-            clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
-                                                                promo_msg=promo)
-        except ProjectClickedmutweet.DoesNotExist:
-            with transaction.atomic():
-                clicked_mt = ProjectClickedmutweet(
-                    bot_sender=bot_sender,
-                    mentioned_user=mentioned_twitteruser,
-                    promo_msg=muTweet.promo_msg
-                )
-                clicked_mt.save()
-
-                mentioned_twitteruser.has_clicked_mutweet=True
-                mentioned_twitteruser.save()
-        finally:
-            clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
-                                                                promo_msg=promo)
-            mu_tclick = ProjectMutweetclick(
-                clicked_mutweet=clicked_mutweet,
-                date_clicked=datetime.datetime.utcnow().replace(tzinfo=utc)
-            )
-            mu_tclick.save()
-
-        # si existe link_all devuelve el link, sino el correspondiente al user_agent
-        if link_all:
-            return link_all
         userAgent = request.META['HTTP_USER_AGENT']
         user_agent = parse(userAgent)
-        if user_agent.os.family == 'Android':
-            return link_android
-        elif user_agent.os.family == 'iOS':
-            return link_ios
-        else:
-            return link_others
+
+        if userAgent!='Twitterbot/1.0':
+
+            muTweet = ProjectMutweet.objects.get(pk=tweet_id)
+            promo = ProjectPromo.objects.get(pk=muTweet.promo_msg._get_pk_val)
+            mentioned_twitteruser = ProjectTwitteruser.objects.get(pk=muTweet.mentioned_twitteruser_id)
+            bot_sender = CoreTwitterbot.objects.get(pk=muTweet.bot_sender_id)
+            link_all = promo.link_all
+            link_android = promo.link_android
+            link_ios = promo.link_ios
+            link_others = promo.link_others
+
+            # se registra el click en el enlace del tweet en la base de datos
+            try:
+                clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
+                                                                    promo_msg=promo)
+            except ProjectClickedmutweet.DoesNotExist:
+                with transaction.atomic():
+                    clicked_mt = ProjectClickedmutweet(
+                        bot_sender=bot_sender,
+                        mentioned_user=mentioned_twitteruser,
+                        promo_msg=muTweet.promo_msg
+                    )
+                    clicked_mt.save()
+
+                    mentioned_twitteruser.has_clicked_mutweet=True
+                    mentioned_twitteruser.save()
+            finally:
+                clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
+                                                                    promo_msg=promo)
+                if user_agent.os.family == 'Android':
+                    platform = 0
+                elif user_agent.os.family == 'iOS':
+                    platform = 1
+                else:
+                    platform = 2
+                mu_tclick = ProjectMutweetclick(
+                    clicked_mutweet=clicked_mutweet,
+                    date_clicked=datetime.datetime.utcnow().replace(tzinfo=utc),
+                    raw_useragent=userAgent,
+                    platform=platform
+                )
+                mu_tclick.save()
+
+            # si existe link_all devuelve el link, sino el correspondiente al user_agent
+            if link_all:
+                return link_all
+            if user_agent.os.family == 'Android':
+                return link_android
+            elif user_agent.os.family == 'iOS':
+                return link_ios
+            else:
+                return link_others
 
 
 

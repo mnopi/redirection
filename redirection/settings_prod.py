@@ -1,16 +1,8 @@
 from .settings import *
+import settings
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'redirection',
-        'USER': 'root',
-        'PASSWORD': '1aragon1',
-        'HOST': '127.0.0.1',
-        # 'HOST': 'igoo.co',
-        'PORT': '3306',
-    }
-}
+
+settings.DATABASES['default']['PASSWORD'] = '1aragon1'
 
 ALLOWED_HOSTS = [
     'labelee.com',
