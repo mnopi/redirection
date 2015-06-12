@@ -24,7 +24,8 @@ def redirector(request, uri=None):
         if userAgent!='Twitterbot/1.0':
 
             muTweet = ProjectMutweet.objects.get(pk=tweet_id)
-            promo = ProjectPromo.objects.get(pk=muTweet.promo_msg._get_pk_val)
+            promo_msg = ProjectPromomsg.objects.get(pk=muTweet.promo_msg._get_pk_val)
+            promo = ProjectPromo.objects.get(pk=promo_msg.promo_id)
             mentioned_twitteruser = ProjectTwitteruser.objects.get(pk=muTweet.mentioned_twitteruser_id)
             bot_sender = CoreTwitterbot.objects.get(pk=muTweet.bot_sender_id)
             link_all = promo.link_all
@@ -35,7 +36,7 @@ def redirector(request, uri=None):
             # se registra el click en el enlace del tweet en la base de datos
             try:
                 clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
-                                                                    promo_msg=promo)
+                                                                    promo_msg=promo_msg)
             except ProjectClickedmutweet.DoesNotExist:
                 with transaction.atomic():
                     clicked_mt = ProjectClickedmutweet(
@@ -49,7 +50,7 @@ def redirector(request, uri=None):
                     mentioned_twitteruser.save()
             finally:
                 clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
-                                                                    promo_msg=promo)
+                                                                    promo_msg=promo_msg)
                 if user_agent.os.family == 'Android':
                     platform = 0
                 elif user_agent.os.family == 'iOS':
