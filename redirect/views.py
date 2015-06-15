@@ -21,7 +21,8 @@ def redirector(request, uri=None):
         userAgent = request.META['HTTP_USER_AGENT']
         user_agent = parse(userAgent)
 
-        if userAgent!='Twitterbot/1.0':
+        if userAgent!='Twitterbot/1.0' and userAgent!='Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)'\
+            and userAgent!='Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)':
 
             muTweet = ProjectMutweet.objects.get(pk=tweet_id)
             promo_msg = ProjectPromomsg.objects.get(pk=muTweet.promo_msg._get_pk_val)
