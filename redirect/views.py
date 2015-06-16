@@ -19,6 +19,7 @@ def redirector(request, uri=None):
         tweet_id = int(a[len(a)-1])
 
         userAgent = request.META['HTTP_USER_AGENT']
+        client_ip = request.META['REMOTE_ADDR']
         user_agent = parse(userAgent)
 
         if userAgent!='Twitterbot/1.0' and userAgent!='Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)'\
@@ -62,7 +63,8 @@ def redirector(request, uri=None):
                     clicked_mutweet=clicked_mutweet,
                     date_clicked=datetime.datetime.utcnow().replace(tzinfo=utc),
                     raw_useragent=userAgent,
-                    platform=platform
+                    platform=platform,
+                    ip=client_ip
                 )
                 mu_tclick.save()
 

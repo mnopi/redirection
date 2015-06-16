@@ -437,6 +437,7 @@ class ProjectMutweetclick(models.Model):
     id = models.IntegerField(primary_key=True)
     clicked_mutweet = models.ForeignKey(ProjectClickedmutweet, related_name='clicks')
     date_clicked = models.DateTimeField()
+    ip = models.CharField(max_length=20, null=False, blank=False)
     ANDROID = 0
     IOS = 1
     OTHERS = 2
