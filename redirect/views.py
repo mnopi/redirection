@@ -20,10 +20,15 @@ def redirector(request, uri=None):
 
         userAgent = request.META['HTTP_USER_AGENT']
         client_ip = request.META['REMOTE_ADDR']
+        if request.META['HTTP_REFERER']:
+            referer = request.META['HTTP_REFERER']
+        else:
+            referer = 'unknown'
+        is_twitter_referer = 'twitter' in referer
         user_agent = parse(userAgent)
 
         if userAgent!='Twitterbot/1.0' and userAgent!='Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)'\
-            and userAgent!='Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)':
+            and userAgent!='Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' and is_twitter_referer:
 
             muTweet = ProjectMutweet.objects.get(pk=tweet_id)
             promo_msg = ProjectPromomsg.objects.get(pk=muTweet.promo_msg._get_pk_val)
@@ -64,7 +69,8 @@ def redirector(request, uri=None):
                     date_clicked=datetime.datetime.utcnow().replace(tzinfo=utc),
                     raw_useragent=userAgent,
                     platform=platform,
-                    ip=client_ip
+                    ip=client_ip,
+                    referer=referer
                 )
                 mu_tclick.save()
 
