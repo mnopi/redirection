@@ -27,7 +27,7 @@ def redirector(request, uri=None):
             referer = request.META['HTTP_REFERER']
         else:
             referer = 'unknown'
-        is_twitter_referer = 'twitter' in referer
+        is_twitter_referer = 't.co' in referer
         user_agent = parse(userAgent)
 
         if userAgent!='Twitterbot/1.0' and userAgent!='Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)'\
