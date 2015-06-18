@@ -19,8 +19,11 @@ def redirector(request, uri=None):
         tweet_id = int(a[len(a)-1])
 
         userAgent = request.META['HTTP_USER_AGENT']
-        client_ip = request.META['REMOTE_ADDR']
-        if request.META['HTTP_REFERER']:
+        if 'HTTP_X_REAL_IP' in request.META:
+            client_ip = request.META['HTTP_X_REAL_IP']
+        else:
+            client_ip = '0.0.0.0'
+        if 'HTTP_REFERER' in request.META:
             referer = request.META['HTTP_REFERER']
         else:
             referer = 'unknown'
