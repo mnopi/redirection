@@ -18,6 +18,12 @@ ALLOWED_HOSTS = [
     'phasion.co',
     'localhost',
     '127.0.0.1'
+
+    'bogadgam.biz',
+    'gameias.biz',
+    'bogaia.biz',
+    'jueggam.biz',
+    'geniglam.biz',
 ]
 
 DEBUG = TEMPLATE_DEBUG = False
