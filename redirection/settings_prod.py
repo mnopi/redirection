@@ -17,7 +17,7 @@ ALLOWED_HOSTS = [
     '104.131.71.11',
     'phasion.co',
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
 
     'bogadgam.biz',
     'gameias.biz',
