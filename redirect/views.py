@@ -13,89 +13,92 @@ from redirect.models import *
 
 
 def redirector(request, uri=None):
-    def get_uri():
-        # Cogemos el id del tweet de la uri
-        a = uri.split('/')
-        tweet_id = int(a[len(a)-1])
 
-        userAgent = request.META['HTTP_USER_AGENT']
-        if 'HTTP_X_REAL_IP' in request.META:
-            client_ip = request.META['HTTP_X_REAL_IP']
+    def comes_from_twitter():
+        """Nos dice si el usuario viene o no de hacer click en un link publicado en twitter por un bot"""
+        return't.co' in get_referer()
+
+    def get_referer():
+        return request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else 'unknown'
+
+    def get_ip():
+        return request.META['HTTP_X_REAL_IP'] if 'HTTP_X_REAL_IP' in request.META else '0.0.0.0'
+
+    def get_url_to_redirect():
+        link_all = promo.link_all
+        link_android = promo.link_android
+        link_ios = promo.link_ios
+        link_others = promo.link_others
+
+        # si existe link_all devuelve el link, sino el correspondiente al user_agent
+        if link_all:
+            return link_all
+        if user_agent.os.family == 'Android':
+            return link_android
+        elif user_agent.os.family == 'iOS':
+            return link_ios
         else:
-            client_ip = '0.0.0.0'
-        if 'HTTP_REFERER' in request.META:
-            referer = request.META['HTTP_REFERER']
-        else:
-            referer = 'unknown'
-        is_twitter_referer = 't.co' in referer
-        user_agent = parse(userAgent)
+            return link_others
 
-        if userAgent!='Twitterbot/1.0' and userAgent!='Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)'\
-            and userAgent!='Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' and is_twitter_referer:
+    def register_mutweet_click():
+        mentioned_twitteruser = ProjectTwitteruser.objects.get(pk=muTweet.mentioned_twitteruser_id)
+        bot_sender = CoreTwitterbot.objects.get(pk=muTweet.bot_sender_id)
 
-            muTweet = ProjectMutweet.objects.get(pk=tweet_id)
-            promo_msg = ProjectPromomsg.objects.get(pk=muTweet.promo_msg._get_pk_val)
-            promo = ProjectPromo.objects.get(pk=promo_msg.promo_id)
-            mentioned_twitteruser = ProjectTwitteruser.objects.get(pk=muTweet.mentioned_twitteruser_id)
-            bot_sender = CoreTwitterbot.objects.get(pk=muTweet.bot_sender_id)
-            link_all = promo.link_all
-            link_android = promo.link_android
-            link_ios = promo.link_ios
-            link_others = promo.link_others
-
-            # se registra el click en el enlace del tweet en la base de datos
-            try:
-                clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
-                                                                    promo_msg=promo_msg)
-            except ProjectClickedmutweet.DoesNotExist:
-                with transaction.atomic():
-                    clicked_mt = ProjectClickedmutweet(
-                        bot_sender=bot_sender,
-                        mentioned_user=mentioned_twitteruser,
-                        promo_msg=muTweet.promo_msg
-                    )
-                    clicked_mt.save()
-
-                    mentioned_twitteruser.has_clicked_mutweet=True
-                    mentioned_twitteruser.save()
-            finally:
-                clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
-                                                                    promo_msg=promo_msg)
-                if user_agent.os.family == 'Android':
-                    platform = 0
-                elif user_agent.os.family == 'iOS':
-                    platform = 1
-                else:
-                    platform = 2
-                mu_tclick = ProjectMutweetclick(
-                    clicked_mutweet=clicked_mutweet,
-                    date_clicked=datetime.datetime.utcnow().replace(tzinfo=utc),
-                    raw_useragent=userAgent,
-                    platform=platform,
-                    ip=client_ip,
-                    referer=referer
+        # se registra el click en el enlace del tweet en la base de datos
+        try:
+            clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
+                                                                promo_msg=promo_msg)
+        except ProjectClickedmutweet.DoesNotExist:
+            with transaction.atomic():
+                clicked_mt = ProjectClickedmutweet(
+                    bot_sender=bot_sender,
+                    mentioned_user=mentioned_twitteruser,
+                    promo_msg=muTweet.promo_msg
                 )
-                mu_tclick.save()
+                clicked_mt.save()
 
-            # si existe link_all devuelve el link, sino el correspondiente al user_agent
-            if link_all:
-                return link_all
+                mentioned_twitteruser.has_clicked_mutweet=True
+                mentioned_twitteruser.save()
+        finally:
+            clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
+                                                                promo_msg=promo_msg)
             if user_agent.os.family == 'Android':
-                return link_android
+                platform = 0
             elif user_agent.os.family == 'iOS':
-                return link_ios
+                platform = 1
             else:
-                return link_others
+                platform = 2
+            mu_tclick = ProjectMutweetclick(
+                clicked_mutweet=clicked_mutweet,
+                date_clicked=datetime.datetime.utcnow().replace(tzinfo=utc),
+                raw_useragent=raw_useragent,
+                platform=platform,
+                ip=get_ip(),
+                referer=get_referer()
+            )
+            mu_tclick.save()
+
+    def is_human():
+        return raw_useragent != 'Twitterbot/1.0' \
+               and raw_useragent != 'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)'\
+               and raw_useragent != 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+
+    # Cogemos el id del tweet de la uri
+    a = uri.split('/')
+    tweet_id = int(a[len(a)-1])
+    muTweet = ProjectMutweet.objects.get(pk=tweet_id)
+    promo_msg = ProjectPromomsg.objects.get(pk=muTweet.promo_msg._get_pk_val)
+    promo = ProjectPromo.objects.get(pk=promo_msg.promo_id)
+
+    raw_useragent = request.META['HTTP_USER_AGENT']
+    user_agent = parse(raw_useragent)
+
+    if is_human() and comes_from_twitter():
+        register_mutweet_click()
 
 
-
-    redirection_url = get_uri()
-    lang = translation.get_language_from_request(request)
-    lang = lang[:2] if lang else None
-
-    # try:
-
-
+    # lang = translation.get_language_from_request(request)
+    # lang = lang[:2] if lang else None
 
     # try:
     #     redirection = page.redirections.get(platform=platform, language=lang)
@@ -122,7 +125,7 @@ def redirector(request, uri=None):
 
     return render_to_response(
         'redirection.html',
-        {'redirection_url': redirection_url},
+        {'redirection_url': get_url_to_redirect()},
         context_instance=RequestContext(request)
     )
 
