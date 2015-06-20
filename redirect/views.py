@@ -53,7 +53,8 @@ def redirector(request, uri=None):
                 clicked_mt = ProjectClickedmutweet(
                     bot_sender=bot_sender,
                     mentioned_user=mentioned_twitteruser,
-                    promo_msg=muTweet.promo_msg
+                    promo_msg=muTweet.promo_msg,
+                    domain=muTweet.domain
                 )
                 clicked_mt.save()
 

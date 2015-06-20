@@ -272,9 +272,19 @@ class ProjectClickedmutweet(models.Model):
     mentioned_user = models.ForeignKey('ProjectTwitteruser')
     promo_msg = models.ForeignKey('ProjectPromomsg')
     msg_sent = models.CharField(max_length=140, blank=True)
+    domain = models.ForeignKey('ProjectDomain')
     class Meta:
         managed = False
         db_table = 'project_clickedmutweet'
+
+class ProjectDomain(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(unique=True, max_length=200)
+    project = models.ForeignKey('ProjectProject', blank=True, null=True)
+    date_added = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'project_domain'
 
 class ProjectExtractor(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -429,6 +439,7 @@ class ProjectMutweet(models.Model):
     mentioned_twitteruser = models.ForeignKey('ProjectTwitteruser')
     promo_msg = models.ForeignKey('ProjectPromomsg')
     msg_sent = models.CharField(max_length=140, blank=True)
+    domain = models.ForeignKey(ProjectDomain, blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'project_mutweet'
