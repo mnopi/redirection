@@ -24,6 +24,23 @@ ALLOWED_HOSTS = [
     'bogaia.biz',
     'jueggam.biz',
     'geniglam.biz',
+
+    'fashiglam.biz',
+    'phasglam.biz',
+    'phanio.biz',
+    'genigam.biz',
+    'bogaglam.biz',
+
+    'bogaes.biz',
+    'bogadias.biz',
+    'bogadglam.biz',
+    'phasgam.biz',
+    'phanios.biz',
+    'phanin.biz',
+    'modagam.biz',
+    'juegias.biz',
+    'juegia.biz',
+    'jueges.biz',
 ]
 
 DEBUG = TEMPLATE_DEBUG = False
