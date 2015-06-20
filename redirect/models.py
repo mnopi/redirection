@@ -271,7 +271,7 @@ class ProjectClickedmutweet(models.Model):
     bot_sender = models.ForeignKey(CoreTwitterbot)
     mentioned_user = models.ForeignKey('ProjectTwitteruser')
     promo_msg = models.ForeignKey('ProjectPromomsg')
-    msg_sent = models.CharField(max_length=140, blank=True)
+    msg_sent = models.CharField(max_length=500, blank=True)
     domain = models.ForeignKey('ProjectDomain')
     class Meta:
         managed = False
@@ -438,7 +438,7 @@ class ProjectMutweet(models.Model):
     bot_sender = models.ForeignKey(CoreTwitterbot, blank=True, null=True)
     mentioned_twitteruser = models.ForeignKey('ProjectTwitteruser')
     promo_msg = models.ForeignKey('ProjectPromomsg')
-    msg_sent = models.CharField(max_length=140, blank=True)
+    msg_sent = models.CharField(max_length=500, blank=True)
     domain = models.ForeignKey(ProjectDomain, blank=True, null=True)
     class Meta:
         managed = False

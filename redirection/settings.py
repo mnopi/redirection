@@ -79,6 +79,7 @@ DATABASES = {
         'PASSWORD': '1aragon1',
         'HOST': '46.101.61.145',
         'PORT': '3306',
+        'OPTIONS': {'charset': 'utf8mb4'},
     }
 
 }
