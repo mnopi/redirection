@@ -41,14 +41,9 @@ def redirector(request, uri=None):
             return link_others
 
     def register_mutweet_click():
-        mentioned_twitteruser = ProjectTwitteruser.objects.get(pk=muTweet.mentioned_twitteruser_id)
-        bot_sender = CoreTwitterbot.objects.get(pk=muTweet.bot_sender_id)
+        """Registra cada click que se hace en los mutweets, incluso si hay varios clicks sobre mismo mutweet"""
 
-        # se registra el click en el enlace del tweet en la base de datos
-        try:
-            clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
-                                                                promo_msg=promo_msg)
-        except ProjectClickedmutweet.DoesNotExist:
+        def register_clicked_mutweet():
             with transaction.atomic():
                 clicked_mt = ProjectClickedmutweet(
                     bot_sender=bot_sender,
@@ -59,8 +54,23 @@ def redirector(request, uri=None):
                 )
                 clicked_mt.save()
 
-                mentioned_twitteruser.has_clicked_mutweet=True
+                mentioned_twitteruser.has_clicked_mutweet = True
                 mentioned_twitteruser.save()
+
+        mentioned_twitteruser = ProjectTwitteruser.objects.get(pk=muTweet.mentioned_twitteruser_id)
+        bot_sender = CoreTwitterbot.objects.get(pk=muTweet.bot_sender_id)
+
+        # se registra el click en el enlace del tweet en la base de datos
+        try:
+            clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
+                                                                promo_msg=promo_msg)
+        except ProjectClickedmutweet.DoesNotExist:
+            # si no existe el registro de mutweet clickeado entonces se crea antes
+            register_clicked_mutweet()
+        except ProjectClickedmutweet.MultipleObjectsReturned:
+            ProjectClickedmutweet.objects.filter(mentioned_user=mentioned_twitteruser,
+                                                 promo_msg=promo_msg).delete()
+            register_clicked_mutweet()
         finally:
             clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
                                                                 promo_msg=promo_msg)
@@ -70,7 +80,7 @@ def redirector(request, uri=None):
                 platform = 1
             else:
                 platform = 2
-            mu_tclick = ProjectMutweetclick(
+            mutweet_click = ProjectMutweetclick(
                 clicked_mutweet=clicked_mutweet,
                 date_clicked=datetime.datetime.utcnow().replace(tzinfo=utc),
                 raw_useragent=raw_useragent,
@@ -78,7 +88,7 @@ def redirector(request, uri=None):
                 ip=get_ip(),
                 referer=get_referer()
             )
-            mu_tclick.save()
+            mutweet_click.save()
 
     def is_human():
         return raw_useragent != 'Twitterbot/1.0' \
@@ -90,7 +100,7 @@ def redirector(request, uri=None):
     tweet_id = int(a[len(a)-1])
     muTweet = ProjectMutweet.objects.get(pk=tweet_id)
     promo_msg = ProjectPromomsg.objects.get(pk=muTweet.promo_msg._get_pk_val)
-    promo = ProjectPromo.objects.get(pk=promo_msg.promo_id)
+    promo = promo_msg.promo_msg_generator_expr.promo
 
     raw_useragent = request.META['HTTP_USER_AGENT']
     user_agent = parse(raw_useragent)

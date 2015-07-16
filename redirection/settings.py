@@ -69,7 +69,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sync_pagelinks',
         "USER": "root",
-        "PASSWORD": "",
+        "PASSWORD": "1aragon1",
         "HOST": "127.0.0.1",
     },
     'twitter_bots_prod':{

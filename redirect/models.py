@@ -1,66 +1,6 @@
-# from django.db import models
-#
-# # Create your models here.
-# class Page(models.Model):
-#     uri = models.CharField(max_length=255, null=False, blank=False, default='none', db_index=True)
-#
-#     # twitter card
-#     PHOTO = 1
-#     SUMMARY_LARGE_IMAGE = 2
-#     SUMMARY = 3
-#     APP = 4
-#     CARD_TYPES = (
-#         (PHOTO, 'photo'),
-#         (SUMMARY_LARGE_IMAGE, 'summary_large_image'),
-#         (SUMMARY, 'summary'),
-#         (APP, 'app'),
-#     )
-#     card_type = models.PositiveIntegerField(null=True, blank=True, choices=CARD_TYPES, default=None)
-#     card_img_file = models.ImageField(upload_to='pages_imgs', blank=True, null=True)
-#     card_img_url = models.URLField(max_length=200, blank=True, null=True)
-#     card_title = models.CharField(max_length=140, blank=True, null=True)
-#     card_description = models.TextField(max_length=500, blank=True, null=True)
-#
-#     def __unicode__(self):
-#         return self.uri
-#
-#
-# class PageAlias(models.Model):
-#     uri = models.CharField(max_length=255, null=False, blank=False, default='none', db_index=True)
-#     page = models.ForeignKey(Page, related_name='aliases')
-#
-#     class Meta:
-#         verbose_name_plural = 'pages aliases'
-#
-#     def __unicode__(self):
-#         return '%s -> %s' % (self.uri, self.page.uri)
-#
-#
-# class Redirection(models.Model):
-#     page = models.ForeignKey(Page, related_name='redirections')
-#     url = models.URLField(max_length=200, null=True, blank=True)
-#
-#     ANDROID = 1
-#     IOS = 2
-#     OTHERS = 3
-#     PLATFORMS = (
-#         (ANDROID, 'android'),
-#         (IOS, 'ios'),
-#         (OTHERS, 'others'),
-#     )
-#     platform = models.PositiveIntegerField(null=True, blank=True, choices=PLATFORMS)
-#     language = models.CharField(max_length=2, null=True, blank=True)
-#
-#     def __unicode__(self):
-#         platform_str = ' @%s' % self.get_platform_str()
-#         return '%s%s -> %s' % (self.page, platform_str, self.url)
-#
-#     def get_platform_str(self):
-#         return self.get_platform_display() if self.platform else 'all'
 from __future__ import unicode_literals
 
 from django.db import models
-
 
 class AuthGroup(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -136,11 +76,7 @@ class CoreTwitterbot(models.Model):
     is_being_used = models.IntegerField()
     is_detected_as_automated = models.IntegerField()
     date_detected_as_automated = models.DateTimeField(blank=True, null=True)
-    # twitter_access_token = models.CharField(max_length=100, blank=True)
-    # twitter_access_token_secret = models.CharField(max_length=100, blank=True)
     date_registered_twitter = models.DateTimeField(blank=True, null=True)
-    # consumer_key = models.CharField(max_length=100, blank=True)
-    # consumer_secret = models.CharField(max_length=100, blank=True)
     next_ptweet_date = models.DateTimeField(blank=True, null=True)
     next_imgtweet_date = models.DateTimeField(blank=True, null=True)
     next_ftweet_date = models.DateTimeField(blank=True, null=True)
@@ -163,6 +99,19 @@ class CoreTwitterbot(models.Model):
     day_start = models.DateTimeField(blank=True, null=True)
     next_follow_date = models.DateTimeField(blank=True, null=True)
     max_follows_per_day = models.IntegerField(blank=True, null=True)
+    bots_file = models.CharField(max_length=250, blank=True)
+    subnet_for_registration = models.CharField(max_length=15, blank=True)
+    half_hour_start = models.DateTimeField(blank=True, null=True)
+    max_updates_per_half_hour = models.IntegerField(blank=True, null=True)
+    ptweets_percentage = models.IntegerField(blank=True, null=True)
+    ftweets_percentage = models.IntegerField(blank=True, null=True)
+    imgtweets_percentage = models.IntegerField(blank=True, null=True)
+    mutweets_percentage = models.IntegerField(blank=True, null=True)
+    is_readable_from_api = models.IntegerField()
+    max_secs_to_send_ptweets = models.IntegerField(blank=True, null=True)
+    max_secs_to_send_ftweets = models.IntegerField(blank=True, null=True)
+    max_secs_to_send_imgtweets = models.IntegerField(blank=True, null=True)
+    max_secs_to_send_mutweets = models.IntegerField(blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'core_twitterbot'
@@ -272,7 +221,7 @@ class ProjectClickedmutweet(models.Model):
     mentioned_user = models.ForeignKey('ProjectTwitteruser')
     promo_msg = models.ForeignKey('ProjectPromomsg')
     msg_sent = models.CharField(max_length=500, blank=True)
-    domain = models.ForeignKey('ProjectDomain')
+    domain = models.ForeignKey('ProjectDomain', blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'project_clickedmutweet'
@@ -448,12 +397,12 @@ class ProjectMutweetclick(models.Model):
     id = models.IntegerField(primary_key=True)
     clicked_mutweet = models.ForeignKey(ProjectClickedmutweet, related_name='clicks')
     date_clicked = models.DateTimeField()
-    ip = models.CharField(max_length=20, null=False, blank=False)
-    referer = models.CharField(max_length=256, null=False, blank=False, default='nuse')
     ANDROID = 0
     IOS = 1
     OTHERS = 2
     platform = models.IntegerField()
+    ip = models.CharField(max_length=20, null=False, blank=False)
+    referer = models.CharField(max_length=256, null=False, blank=False, default='nuse')
     raw_useragent = models.CharField(max_length=500)
     class Meta:
         managed = False
@@ -487,25 +436,56 @@ class ProjectProjectTargetUsers(models.Model):
 class ProjectPromo(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=140, blank=True)
-    msg_generator_expression = models.CharField(max_length=500)
     link_all = models.CharField(max_length=300, blank=True)
     link_android = models.CharField(max_length=300, blank=True)
     link_ios = models.CharField(max_length=300, blank=True)
     link_others = models.CharField(max_length=300, blank=True)
     project = models.ForeignKey(ProjectProject)
     active = models.IntegerField()
-    language = models.CharField(max_length=2)
+    category = models.ForeignKey('ProjectPromocategory', blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'project_promo'
 
+class ProjectPromocategory(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=140)
+    class Meta:
+        managed = False
+        db_table = 'project_promocategory'
+
+class ProjectPromohashtag(models.Model):
+    id = models.IntegerField(primary_key=True)
+    promo = models.ForeignKey(ProjectPromo)
+    hashtag = models.ForeignKey(ProjectHashtag)
+    class Meta:
+        managed = False
+        db_table = 'project_promohashtag'
+
 class ProjectPromomsg(models.Model):
     id = models.IntegerField(primary_key=True)
     msg = models.CharField(max_length=140)
-    promo = models.ForeignKey(ProjectPromo)
+    promo_msg_generator_expr = models.ForeignKey('ProjectPromomsggeneratorexpression')
     class Meta:
         managed = False
         db_table = 'project_promomsg'
+
+class ProjectPromomsggeneratorexpression(models.Model):
+    id = models.IntegerField(primary_key=True)
+    expression = models.TextField()
+    promo = models.ForeignKey(ProjectPromo)
+    language = models.CharField(max_length=2)
+    class Meta:
+        managed = False
+        db_table = 'project_promomsggeneratorexpression'
+
+class ProjectPromotargetuser(models.Model):
+    id = models.IntegerField(primary_key=True)
+    promo = models.ForeignKey(ProjectPromo)
+    target_user = models.ForeignKey('ProjectTargetuser')
+    class Meta:
+        managed = False
+        db_table = 'project_promotargetuser'
 
 class ProjectProxiesgroup(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -531,12 +511,10 @@ class ProjectProxiesgroup(models.Model):
     take_breaks = models.IntegerField()
     send_mctweets = models.IntegerField()
     num_consecutive_tumentions_for_check_mentioning_works = models.IntegerField()
-    max_updates_per_hour = models.CharField(max_length=10)
     do_favs = models.IntegerField()
     minutes_between_favs = models.CharField(max_length=10)
     do_retweets = models.IntegerField()
     minutes_between_retweets = models.CharField(max_length=10)
-    max_bots_per_twitter_app = models.IntegerField()
     do_follows = models.IntegerField()
     max_follows_per_day = models.CharField(max_length=10)
     max_unfollows_per_day = models.CharField(max_length=10)
@@ -567,7 +545,14 @@ class ProjectProxiesgroup(models.Model):
     interleave_mistakes_on_mutweet_msg = models.IntegerField()
     interleave_symbols_every_words_num = models.CharField(max_length=10)
     interleave_mistakes_count = models.CharField(max_length=10)
-    max_bots_per_api_key = models.CharField(max_length=10)
+    max_bots_per_twitter_api_key = models.CharField(max_length=10)
+    half_hour_mode = models.IntegerField()
+    max_updates_per_half_hour = models.CharField(max_length=10)
+    ptweets_percentage = models.CharField(max_length=10)
+    ftweets_percentage = models.CharField(max_length=10)
+    imgtweets_percentage = models.CharField(max_length=10)
+    mutweets_percentage = models.CharField(max_length=10)
+    pva_bot = models.ForeignKey(CoreTwitterbot, blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'project_proxiesgroup'
