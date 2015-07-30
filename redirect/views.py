@@ -25,20 +25,24 @@ def redirector(request, uri=None):
         return request.META['HTTP_X_REAL_IP'] if 'HTTP_X_REAL_IP' in request.META else '0.0.0.0'
 
     def get_url_to_redirect():
-        link_all = promo.link_all
-        link_android = promo.link_android
-        link_ios = promo.link_ios
-        link_others = promo.link_others
 
-        # si existe link_all devuelve el link, sino el correspondiente al user_agent
-        if link_all:
-            return link_all
-        if user_agent.os.family == 'Android':
-            return link_android
-        elif user_agent.os.family == 'iOS':
-            return link_ios
+        if promo.project.name.lower() == 'bogadia':
+            return 'http://www.bogadia.com/?p=%s' % promo.name
         else:
-            return link_others
+            link_all = promo.link_all
+            link_android = promo.link_android
+            link_ios = promo.link_ios
+            link_others = promo.link_others
+
+            # si existe link_all devuelve el link, sino el correspondiente al user_agent
+            if link_all:
+                return link_all
+            if user_agent.os.family == 'Android':
+                return link_android
+            elif user_agent.os.family == 'iOS':
+                return link_ios
+            else:
+                return link_others
 
     def register_mutweet_click():
         """Registra cada click que se hace en los mutweets, incluso si hay varios clicks sobre mismo mutweet"""
