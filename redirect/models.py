@@ -88,8 +88,6 @@ class CoreTwitterbot(models.Model):
     max_imgtweets_per_day = models.IntegerField(blank=True, null=True)
     max_ftweets_per_day = models.IntegerField(blank=True, null=True)
     max_mutweets_per_day = models.IntegerField(blank=True, null=True)
-    next_followback_date = models.DateTimeField(blank=True, null=True)
-    max_followbacks_per_day = models.IntegerField(blank=True, null=True)
     next_unfollow_date = models.DateTimeField(blank=True, null=True)
     max_unfollows_per_day = models.IntegerField(blank=True, null=True)
     next_retweet_date = models.DateTimeField(blank=True, null=True)
@@ -112,6 +110,27 @@ class CoreTwitterbot(models.Model):
     max_secs_to_send_ftweets = models.IntegerField(blank=True, null=True)
     max_secs_to_send_imgtweets = models.IntegerField(blank=True, null=True)
     max_secs_to_send_mutweets = models.IntegerField(blank=True, null=True)
+    max_follows_per_half_hour = models.IntegerField(blank=True, null=True)
+    max_unfollows_per_half_hour = models.IntegerField(blank=True, null=True)
+    max_secs_to_follow = models.IntegerField(blank=True, null=True)
+    max_secs_to_unfollow = models.IntegerField(blank=True, null=True)
+    max_total_followings = models.IntegerField(blank=True, null=True)
+    next_followers_update = models.DateTimeField(blank=True, null=True)
+    next_ctweet_date = models.DateTimeField(blank=True, null=True)
+    max_ctweets_per_day = models.IntegerField(blank=True, null=True)
+    ctweets_percentage = models.IntegerField(blank=True, null=True)
+    max_secs_to_send_ctweets = models.IntegerField(blank=True, null=True)
+    twitter_avatar_complete_date = models.DateTimeField(blank=True, null=True)
+    twitter_bio_complete_date = models.DateTimeField(blank=True, null=True)
+    twitter_fullname_completed = models.IntegerField()
+    twitter_fullname_complete_date = models.DateTimeField(blank=True, null=True)
+    twitter_api_first_access_date = models.DateTimeField(blank=True, null=True)
+    max_unfavs_per_half_hour = models.IntegerField(blank=True, null=True)
+    max_favs_per_half_hour = models.IntegerField(blank=True, null=True)
+    max_secs_to_fav = models.IntegerField(blank=True, null=True)
+    max_secs_to_unfav = models.IntegerField(blank=True, null=True)
+    next_unfav_date = models.DateTimeField(blank=True, null=True)
+    max_unfavs_per_day = models.IntegerField(blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'core_twitterbot'
@@ -193,19 +212,32 @@ class ProjectActiononotherstweet(models.Model):
         managed = False
         db_table = 'project_actiononotherstweet'
 
-class ProjectActionontwitteruser(models.Model):
+class ProjectBotfavtwitterusertweet(models.Model):
     id = models.IntegerField(primary_key=True)
-    bot = models.ForeignKey(CoreTwitterbot)
     action_performed = models.IntegerField()
     action_performed_ok = models.IntegerField()
     date_assigned = models.DateTimeField()
     date_performed = models.DateTimeField(blank=True, null=True)
     twitteruser_id = models.BigIntegerField()
     twitteruser_name = models.CharField(max_length=50)
-    action = models.IntegerField()
+    bot = models.ForeignKey(CoreTwitterbot)
+    twitteruser_tweet_id = models.BigIntegerField(blank=True, null=True)
     class Meta:
         managed = False
-        db_table = 'project_actionontwitteruser'
+        db_table = 'project_botfavtwitterusertweet'
+
+class ProjectBotfollowtwitteruser(models.Model):
+    id = models.IntegerField(primary_key=True)
+    action_performed = models.IntegerField()
+    action_performed_ok = models.IntegerField()
+    date_assigned = models.DateTimeField()
+    date_performed = models.DateTimeField(blank=True, null=True)
+    twitteruser_id = models.BigIntegerField()
+    twitteruser_name = models.CharField(max_length=50)
+    bot = models.ForeignKey(CoreTwitterbot)
+    class Meta:
+        managed = False
+        db_table = 'project_botfollowtwitteruser'
 
 class ProjectBotpromomsgassigned(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -214,6 +246,33 @@ class ProjectBotpromomsgassigned(models.Model):
     class Meta:
         managed = False
         db_table = 'project_botpromomsgassigned'
+
+class ProjectBotunfavtwitterusertweet(models.Model):
+    id = models.IntegerField(primary_key=True)
+    action_performed = models.IntegerField()
+    action_performed_ok = models.IntegerField()
+    date_assigned = models.DateTimeField()
+    date_performed = models.DateTimeField(blank=True, null=True)
+    twitteruser_id = models.BigIntegerField()
+    twitteruser_name = models.CharField(max_length=50)
+    bot = models.ForeignKey(CoreTwitterbot)
+    twitteruser_tweet_id = models.BigIntegerField()
+    class Meta:
+        managed = False
+        db_table = 'project_botunfavtwitterusertweet'
+
+class ProjectBotunfollowtwitteruser(models.Model):
+    id = models.IntegerField(primary_key=True)
+    action_performed = models.IntegerField()
+    action_performed_ok = models.IntegerField()
+    date_assigned = models.DateTimeField()
+    date_performed = models.DateTimeField(blank=True, null=True)
+    twitteruser_id = models.BigIntegerField()
+    twitteruser_name = models.CharField(max_length=50)
+    bot = models.ForeignKey(CoreTwitterbot)
+    class Meta:
+        managed = False
+        db_table = 'project_botunfollowtwitteruser'
 
 class ProjectClickedmutweet(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -225,6 +284,36 @@ class ProjectClickedmutweet(models.Model):
     class Meta:
         managed = False
         db_table = 'project_clickedmutweet'
+
+class ProjectCtweet(models.Model):
+    id = models.IntegerField(primary_key=True)
+    date_created = models.DateTimeField()
+    date_sent = models.DateTimeField(blank=True, null=True)
+    sent_ok = models.IntegerField()
+    bot_sender = models.ForeignKey(CoreTwitterbot)
+    ctweet_seed = models.ForeignKey('ProjectCtweetseed')
+    msg_sent = models.TextField(blank=True)
+    class Meta:
+        managed = False
+        db_table = 'project_ctweet'
+
+class ProjectCtweetseed(models.Model):
+    id = models.IntegerField(primary_key=True)
+    msg = models.TextField()
+    file = models.CharField(max_length=100, blank=True)
+    language = models.CharField(max_length=2)
+    date_created = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'project_ctweetseed'
+
+class ProjectCtweetseedtheme(models.Model):
+    id = models.IntegerField(primary_key=True)
+    ctweet_seed = models.ForeignKey(ProjectCtweetseed)
+    theme = models.ForeignKey('ProjectTheme')
+    class Meta:
+        managed = False
+        db_table = 'project_ctweetseedtheme'
 
 class ProjectDomain(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -257,6 +346,7 @@ class ProjectFeed(models.Model):
     id = models.IntegerField(primary_key=True)
     url = models.CharField(unique=True, max_length=200)
     name = models.CharField(max_length=100)
+    last_fetch_date = models.DateTimeField(blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'project_feed'
@@ -313,6 +403,14 @@ class ProjectFtweet(models.Model):
     class Meta:
         managed = False
         db_table = 'project_ftweet'
+
+class ProjectGrouptheme(models.Model):
+    id = models.IntegerField(primary_key=True)
+    group = models.ForeignKey('ProjectProxiesgroup')
+    theme = models.ForeignKey('ProjectTheme')
+    class Meta:
+        managed = False
+        db_table = 'project_grouptheme'
 
 class ProjectHashtag(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -395,15 +493,12 @@ class ProjectMutweet(models.Model):
 
 class ProjectMutweetclick(models.Model):
     id = models.IntegerField(primary_key=True)
-    clicked_mutweet = models.ForeignKey(ProjectClickedmutweet, related_name='clicks')
+    clicked_mutweet = models.ForeignKey(ProjectClickedmutweet)
     date_clicked = models.DateTimeField()
-    ANDROID = 0
-    IOS = 1
-    OTHERS = 2
     platform = models.IntegerField()
-    ip = models.CharField(max_length=20, null=False, blank=False)
-    referer = models.CharField(max_length=256, null=False, blank=False, default='nuse')
     raw_useragent = models.CharField(max_length=500)
+    ip = models.CharField(max_length=20)
+    referer = models.CharField(max_length=256)
     class Meta:
         managed = False
         db_table = 'project_mutweetclick'
@@ -512,20 +607,13 @@ class ProjectProxiesgroup(models.Model):
     send_mctweets = models.IntegerField()
     num_consecutive_tumentions_for_check_mentioning_works = models.IntegerField()
     do_favs = models.IntegerField()
-    minutes_between_favs = models.CharField(max_length=10)
     do_retweets = models.IntegerField()
     minutes_between_retweets = models.CharField(max_length=10)
     do_follows = models.IntegerField()
-    max_follows_per_day = models.CharField(max_length=10)
-    max_unfollows_per_day = models.CharField(max_length=10)
     break_start_hour = models.CharField(max_length=10)
     break_duration_hours = models.CharField(max_length=10)
     rotate_api_keys = models.IntegerField()
     max_hours_using_same_api_key = models.CharField(max_length=10, blank=True)
-    minutes_between_follows = models.CharField(max_length=10)
-    minutes_between_followbacks = models.CharField(max_length=10)
-    minutes_between_unfollows = models.CharField(max_length=10)
-    max_followbacks_per_day = models.CharField(max_length=10)
     send_mutweets = models.IntegerField()
     minutes_between_mutweets = models.CharField(max_length=10)
     max_mutweets_per_day = models.CharField(max_length=10)
@@ -553,6 +641,23 @@ class ProjectProxiesgroup(models.Model):
     imgtweets_percentage = models.CharField(max_length=10)
     mutweets_percentage = models.CharField(max_length=10)
     pva_bot = models.ForeignKey(CoreTwitterbot, blank=True, null=True)
+    max_follows_per_half_hour = models.CharField(max_length=10)
+    max_unfollows_per_half_hour = models.CharField(max_length=10)
+    days_to_wait_followback = models.CharField(max_length=10)
+    hours_between_followers_update = models.CharField(max_length=10)
+    send_ctweets = models.IntegerField()
+    ctweets_lang = models.CharField(max_length=2)
+    interleave_symbols_on_ctweet_msg = models.IntegerField()
+    ctweet_msg_interleave_symbols_every_words_num = models.CharField(max_length=10)
+    interleave_mistakes_on_ctweet_msg = models.IntegerField()
+    ctweet_msg_interleave_mistakes_count = models.CharField(max_length=10)
+    ctweets_percentage = models.CharField(max_length=10)
+    max_ctweets_per_day = models.CharField(max_length=10)
+    max_favs_per_half_hour = models.CharField(max_length=10)
+    max_unfavs_per_half_hour = models.CharField(max_length=10)
+    max_unfavs_per_day = models.CharField(max_length=10)
+    max_follows_per_day = models.CharField(max_length=10)
+    max_unfollows_per_day = models.CharField(max_length=10)
     class Meta:
         managed = False
         db_table = 'project_proxiesgroup'
@@ -589,6 +694,14 @@ class ProjectTargetuser(models.Model):
     class Meta:
         managed = False
         db_table = 'project_targetuser'
+
+class ProjectTheme(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+    date_created = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'project_theme'
 
 class ProjectTugroup(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -657,6 +770,7 @@ class ProjectTwitteruser(models.Model):
     verified = models.IntegerField()
     date_saved = models.DateTimeField()
     has_clicked_mutweet = models.IntegerField()
+    followings_count = models.IntegerField(blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'project_twitteruser'
@@ -684,6 +798,19 @@ class ProjectTwitteruserNew(models.Model):
         managed = False
         db_table = 'project_twitteruser_new'
 
+class ProjectTwitteruserfollowbot(models.Model):
+    id = models.IntegerField(primary_key=True)
+    action_performed = models.IntegerField()
+    action_performed_ok = models.IntegerField()
+    date_assigned = models.DateTimeField()
+    date_performed = models.DateTimeField(blank=True, null=True)
+    twitteruser_id = models.BigIntegerField()
+    twitteruser_name = models.CharField(max_length=50)
+    bot = models.ForeignKey(CoreTwitterbot)
+    class Meta:
+        managed = False
+        db_table = 'project_twitteruserfollowbot'
+
 class ProjectTwitteruserhashashtag(models.Model):
     id = models.IntegerField(primary_key=True)
     hashtag = models.ForeignKey(ProjectHashtag)
@@ -692,6 +819,19 @@ class ProjectTwitteruserhashashtag(models.Model):
     class Meta:
         managed = False
         db_table = 'project_twitteruserhashashtag'
+
+class ProjectTwitteruserunfollowbot(models.Model):
+    id = models.IntegerField(primary_key=True)
+    action_performed = models.IntegerField()
+    action_performed_ok = models.IntegerField()
+    date_assigned = models.DateTimeField()
+    date_performed = models.DateTimeField(blank=True, null=True)
+    twitteruser_id = models.BigIntegerField()
+    twitteruser_name = models.CharField(max_length=50)
+    bot = models.ForeignKey(CoreTwitterbot)
+    class Meta:
+        managed = False
+        db_table = 'project_twitteruserunfollowbot'
 
 class SouthMigrationhistory(models.Model):
     id = models.IntegerField(primary_key=True)
