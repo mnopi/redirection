@@ -190,13 +190,13 @@ DOMAINS_JOSKO = [
     'jueges.biz',
 ]
 DOMAINS_YERAY = [
-    'realplaying.info'
-    'demongamer.info'
-    'gamersbulk.info'
-    'gamewebber.info'
-    'prossimoda.info'
-    'esforfresh.info'
-    'estilomanos.info'
+    'realplaying.info',
+    'demongamer.info',
+    'gamersbulk.info',
+    'gamewebber.info',
+    'prossimoda.info',
+    'esforfresh.info',
+    'estilomanos.info',
     'chicpose.info',
 ]
 DOMAINS_RAMON = [
