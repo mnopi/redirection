@@ -18,29 +18,9 @@ ALLOWED_HOSTS = [
     'phasion.co',
     'localhost',
     '127.0.0.1',
-
-    'bogadgam.biz',
-    'gameias.biz',
-    'bogaia.biz',
-    'jueggam.biz',
-    'geniglam.biz',
-
-    'fashiglam.biz',
-    'phasglam.biz',
-    'phanio.biz',
-    'genigam.biz',
-    'bogaglam.biz',
-
-    'bogaes.biz',
-    'bogadias.biz',
-    'bogadglam.biz',
-    'phasgam.biz',
-    'phanios.biz',
-    'phanin.biz',
-    'modagam.biz',
-    'juegias.biz',
-    'juegia.biz',
-    'jueges.biz',
 ]
+ALLOWED_HOSTS += DOMAINS_JOSKO
+ALLOWED_HOSTS += DOMAINS_YERAY
+ALLOWED_HOSTS += DOMAINS_RAMON
 
 DEBUG = TEMPLATE_DEBUG = False

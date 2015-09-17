@@ -10,7 +10,7 @@ from pytz import utc
 from user_agents import parse
 from redirect.models import *
 # from redirect.models import Page, PageAlias, Redirection
-from redirection.settings import DOMAINS
+from redirection.settings import DOMAINS_IDX_BY_CONNECTION
 
 
 def redirector(request, uri=None):
@@ -104,7 +104,7 @@ def redirector(request, uri=None):
 
     def get_db_connection(domain):
         """Saca el nombre de la base de datos que corresponde con el dominio dado"""
-        for k, v in DOMAINS.iteritems():
+        for k, v in DOMAINS_IDX_BY_CONNECTION.iteritems():
             for dom in v:
                 if domain == dom:
                     return k

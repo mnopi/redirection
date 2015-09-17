@@ -165,33 +165,59 @@ LOGGING = {
 APPEND_SLASH = True
 
 
+# Lista de dominios para cada uno
+
+DOMAINS_JOSKO = [
+    'bogadgam.biz',
+    'gameias.biz',
+    'bogaia.biz',
+    'jueggam.biz',
+    'geniglam.biz',
+    'fashiglam.biz',
+    'phasglam.biz',
+    'phanio.biz',
+    'genigam.biz',
+    'bogaglam.biz',
+    'bogaes.biz',
+    'bogadias.biz',
+    'bogadglam.biz',
+    'phasgam.biz',
+    'phanios.biz',
+    'phanin.biz',
+    'modagam.biz',
+    'juegias.biz',
+    'juegia.biz',
+    'jueges.biz',
+]
+DOMAINS_YERAY = [
+    'realplaying.info'
+    'demongamer.info'
+    'gamersbulk.info'
+    'gamewebber.info'
+    'prossimoda.info'
+    'esforfresh.info'
+    'estilomanos.info'
+    'chicpose.info',
+]
+DOMAINS_RAMON = [
+    'divhana.info',
+    'femmsacion.info',
+    'modentidad.info',
+    'comunamoda.info',
+    'divinias.info',
+    'cleanandplay.info',
+    'relaxinggame.info',
+    'happiergaming.info',
+    'gameforblame.info',
+    'blameforgame.info',
+    'gameinthepain.info',
+]
+
+
 #
 # Aquí ponemos a qué base de datos se tiene que conectar con cada dominio
-DOMAINS = {
-    CONNECTION_NAME_JOSKO: [
-
-    ],
-    CONNECTION_NAME_YERAY: [
-        'realplaying.info'
-        'demongamer.info'
-        'gamersbulk.info'
-        'gamewebber.info'
-        'prossimoda.info'
-        'esforfresh.info'
-        'estilomanos.info'
-        'chicpose.info',
-    ],
-    CONNECTION_NAME_RAMON: [
-        'divhana.info',
-        'femmsacion.info',
-        'modentidad.info',
-        'comunamoda.info',
-        'divinias.info',
-        'cleanandplay.info',
-        'relaxinggame.info',
-        'happiergaming.info',
-        'gameforblame.info',
-        'blameforgame.info',
-        'gameinthepain.info',
-    ],
+DOMAINS_IDX_BY_CONNECTION = {
+    CONNECTION_NAME_JOSKO: DOMAINS_JOSKO,
+    CONNECTION_NAME_YERAY: DOMAINS_YERAY,
+    CONNECTION_NAME_RAMON: DOMAINS_RAMON,
 }
