@@ -10,6 +10,7 @@ from pytz import utc
 from user_agents import parse
 from redirect.models import *
 # from redirect.models import Page, PageAlias, Redirection
+from redirection.settings import DOMAINS
 
 
 def redirector(request, uri=None):
@@ -27,7 +28,8 @@ def redirector(request, uri=None):
     def get_url_to_redirect():
 
         if promo.project.name.lower() == 'bogadia':
-            return 'http://www.bogadia.com/?p=%s' % promo.name
+            post_id = promo.name or promo.link_all
+            return 'http://www.bogadia.com/?p=%s' % post_id
         else:
             link_all = promo.link_all
             link_android = promo.link_android
@@ -56,28 +58,29 @@ def redirector(request, uri=None):
                     msg_sent=muTweet.msg_sent,
                     domain=muTweet.domain
                 )
-                clicked_mt.save()
+                clicked_mt.save(using=db_connection_to_use)
 
                 mentioned_twitteruser.has_clicked_mutweet = True
-                mentioned_twitteruser.save()
+                mentioned_twitteruser.save(using=db_connection_to_use)
 
-        mentioned_twitteruser = ProjectTwitteruser.objects.get(pk=muTweet.mentioned_twitteruser_id)
-        bot_sender = CoreTwitterbot.objects.get(pk=muTweet.bot_sender_id)
+        mentioned_twitteruser = ProjectTwitteruser.objects.using(db_connection_to_use).get(pk=muTweet.mentioned_twitteruser_id)
+        bot_sender = CoreTwitterbot.objects.using(db_connection_to_use).get(pk=muTweet.bot_sender_id)
 
         # se registra el click en el enlace del tweet en la base de datos
         try:
-            clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
-                                                                promo_msg=promo_msg)
+            clicked_mutweet = ProjectClickedmutweet.objects.using(db_connection_to_use)\
+                .get(mentioned_user=mentioned_twitteruser, promo_msg=promo_msg)
         except ProjectClickedmutweet.DoesNotExist:
             # si no existe el registro de mutweet clickeado entonces se crea antes
             register_clicked_mutweet()
         except ProjectClickedmutweet.MultipleObjectsReturned:
-            ProjectClickedmutweet.objects.filter(mentioned_user=mentioned_twitteruser,
-                                                 promo_msg=promo_msg).delete()
+            ProjectClickedmutweet.objects.using(db_connection_to_use)\
+                .filter(mentioned_user=mentioned_twitteruser, promo_msg=promo_msg)\
+                .delete(using=db_connection_to_use)
             register_clicked_mutweet()
         finally:
-            clicked_mutweet = ProjectClickedmutweet.objects.get(mentioned_user=mentioned_twitteruser,
-                                                                promo_msg=promo_msg)
+            clicked_mutweet = ProjectClickedmutweet.objects.using(db_connection_to_use)\
+                .get(mentioned_user=mentioned_twitteruser, promo_msg=promo_msg)
             if user_agent.os.family == 'Android':
                 platform = 0
             elif user_agent.os.family == 'iOS':
@@ -92,18 +95,30 @@ def redirector(request, uri=None):
                 ip=get_ip(),
                 referer=get_referer()
             )
-            mutweet_click.save()
+            mutweet_click.save(using=db_connection_to_use)
 
     def is_human():
         return raw_useragent != 'Twitterbot/1.0' \
                and raw_useragent != 'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)'\
                and raw_useragent != 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
 
+    def get_db_connection(domain):
+        """Saca el nombre de la base de datos que corresponde con el dominio dado"""
+        for k, v in DOMAINS.iteritems():
+            for dom in v:
+                if domain == dom:
+                    return k
+
+    domain = request.META['HTTP_HOST']
+    db_connection_to_use = get_db_connection(domain)
+    if not db_connection_to_use:
+        raise Exception('DB connection not found for domain %s' % domain)
+
     # Cogemos el id del tweet de la uri
     a = uri.split('/')
     tweet_id = int(a[len(a)-1])
-    muTweet = ProjectMutweet.objects.get(pk=tweet_id)
-    promo_msg = ProjectPromomsg.objects.get(pk=muTweet.promo_msg._get_pk_val)
+    muTweet = ProjectMutweet.objects.using(db_connection_to_use).get(pk=tweet_id)
+    promo_msg = ProjectPromomsg.objects.using(db_connection_to_use).get(pk=muTweet.promo_msg._get_pk_val)
     promo = promo_msg.promo_msg_generator_expr.promo
 
     raw_useragent = request.META['HTTP_USER_AGENT']

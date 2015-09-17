@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Django settings for redirection project.
 
@@ -64,6 +66,13 @@ WSGI_APPLICATION = 'redirection.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
+CONNECTION_NAME_JOSKO = 'twitterbots_josko'
+CONNECTION_NAME_YERAY = 'twitterbots_yeray'
+CONNECTION_NAME_RAMON = 'twitterbots_ramon'
+DATABASE_NAME_JOSKO = 'twitter_bots_prod'
+DATABASE_NAME_YERAY = 'twitter_bots_prod'
+DATABASE_NAME_RAMON = 'twitter_bots_dev_ramon'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -72,8 +81,26 @@ DATABASES = {
         "PASSWORD": "1aragon1",
         "HOST": "127.0.0.1",
     },
-    'twitter_bots_prod':{
-        'NAME': 'twitter_bots_prod',
+    CONNECTION_NAME_JOSKO: {
+        'NAME': DATABASE_NAME_JOSKO,
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'root',
+        'PASSWORD': '1aragon1',
+        'HOST': '46.101.61.145',
+        'PORT': '3306',
+        'OPTIONS': {'charset': 'utf8mb4'},
+    },
+    CONNECTION_NAME_YERAY: {
+        'NAME': DATABASE_NAME_YERAY,
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'root',
+        'PASSWORD': '1aragon1',
+        'HOST': '46.101.61.145',
+        'PORT': '3306',
+        'OPTIONS': {'charset': 'utf8mb4'},
+    },
+    CONNECTION_NAME_RAMON: {
+        'NAME': DATABASE_NAME_RAMON,
         'ENGINE': 'django.db.backends.mysql',
         'USER': 'root',
         'PASSWORD': '1aragon1',
@@ -81,11 +108,16 @@ DATABASES = {
         'PORT': '3306',
         'OPTIONS': {'charset': 'utf8mb4'},
     }
-
 }
 
+# esto no es necesario puesto que hacemos .using(connection_to_use) para hacer un quertyset sobre una conexión específica
+# DATABASE_ROUTERS = (
+#     'redirect.twitter_bots_router.TwitterBotsRamonRouter',
+#     'redirect.twitter_bots_router.TwitterBotsYerayRouter',
+#     'redirect.twitter_bots_router.TwitterBotsJoscoRouter',
+# )
 
-DATABASE_ROUTERS = ('redirect.twitter_bots_router.TwitterBotsRouter',)
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -131,3 +163,35 @@ LOGGING = {
 }
 
 APPEND_SLASH = True
+
+
+#
+# Aquí ponemos a qué base de datos se tiene que conectar con cada dominio
+DOMAINS = {
+    CONNECTION_NAME_JOSKO: [
+
+    ],
+    CONNECTION_NAME_YERAY: [
+        'realplaying.info'
+        'demongamer.info'
+        'gamersbulk.info'
+        'gamewebber.info'
+        'prossimoda.info'
+        'esforfresh.info'
+        'estilomanos.info'
+        'chicpose.info',
+    ],
+    CONNECTION_NAME_RAMON: [
+        'divhana.info',
+        'femmsacion.info',
+        'modentidad.info',
+        'comunamoda.info',
+        'divinias.info',
+        'cleanandplay.info',
+        'relaxinggame.info',
+        'happiergaming.info',
+        'gameforblame.info',
+        'blameforgame.info',
+        'gameinthepain.info',
+    ],
+}
