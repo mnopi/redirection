@@ -188,8 +188,6 @@ DOMAINS_JOSKO = [
     'juegias.biz',
     'juegia.biz',
     'jueges.biz',
-]
-DOMAINS_YERAY = [
     'realplaying.info',
     'demongamer.info',
     'gamersbulk.info',
@@ -198,8 +196,6 @@ DOMAINS_YERAY = [
     'esforfresh.info',
     'estilomanos.info',
     'chicpose.info',
-]
-DOMAINS_RAMON = [
     'divhana.info',
     'femmsacion.info',
     'modentidad.info',
@@ -211,6 +207,12 @@ DOMAINS_RAMON = [
     'gameforblame.info',
     'blameforgame.info',
     'gameinthepain.info',
+]
+DOMAINS_YERAY = [
+
+]
+DOMAINS_RAMON = [
+
 ]
 
 
